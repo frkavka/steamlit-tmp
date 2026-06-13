@@ -35,9 +35,16 @@ st.write("### 🧪 【デモ用】学習プロセスの変化")
 col1, col2, col3 = st.columns([1, 3, 1])
 
 with col1:
-    # ◀ ボタン（0より小さくならないようにする）
+    # ◀ ボタン
     if st.button("◀ 前の状態へ"):
-        st.session_state.page_index = max(0, st.session_state.page_index - 1)
+        if st.session_state.page_index > 0:
+            st.session_state.page_index -= 1
+            # 👇 【追加】切り替わったら進捗とキープリストをリセット
+            for side in ["A", "B"]:
+                if f"current_idx_{side}" in st.session_state:
+                    st.session_state[f"current_idx_{side}"] = 0
+                    st.session_state[f"keep_list_{side}"] = []
+            st.rerun()  # 画面を強制リロードして反映
 
 with col2:
     # 現在選ばれているラベルを中央揃えで表示
@@ -48,11 +55,16 @@ with col2:
     )
 
 with col3:
-    # ▶ ボタン（リストの最大数を超えないようにする）
+    # ▶ ボタン
     if st.button("次の状態へ ▶"):
-        st.session_state.page_index = min(
-            len(csv_files) - 1, st.session_state.page_index + 1
-        )
+        if st.session_state.page_index < len(csv_files) - 1:
+            st.session_state.page_index += 1
+            # 👇 【追加】切り替わったら進捗とキープリストをリセット
+            for side in ["A", "B"]:
+                if f"current_idx_{side}" in st.session_state:
+                    st.session_state[f"current_idx_{side}"] = 0
+                    st.session_state[f"keep_list_{side}"] = []
+            st.rerun()  # 画面を強制リロードして反映
 
 st.write("---")
 
